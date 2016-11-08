@@ -3,23 +3,29 @@ import urllib2, os, re, codecs, time
 
 
 # will save output to a file
-def savefile(savethis, link):
+def savefile(savethis):
         save = open('list.txt', 'a')
-        for a in savethis:
-            printit = a.string + "  " + link + a.get('href') + "\n"
+        for o in range(y):
+            printit = ""
+            for j in range(x):
+                if x == 2:
+                    printit =+ "  " + savethis[x][y] + "/n"
+                else:
+                    printit = savethis[x][y]
             save.write(printit)
         save.close()
 
 
 # Checks findings against previous found records and removes them if they are the same
-def checkfinds(findings, link):
+def checkfinds(findings):
     last = open('list.txt')
-    for a in findings:
-        checkit = a.string + "   " + link + a.get('href')
-        if checkit in last:
-            del checkit
-    last.close()
-    savefile(findings, link)
+    for o in range(y):
+        for j in range(x):
+            checkit = findings[x][y]
+            if checkit in last:
+                del findings[x][y]
+            print findings[x][y]
+    savefile(findings)
 
 
 # Sorts through html returns and removes undesired posts
@@ -33,12 +39,17 @@ def pickandchoose(choose):
             print craglist
 
 
-def pull(link, relink):
+def pull(link, relink, listof):
+    b = 1
     content = urllib2.urlopen(link).read()
     soup = BeautifulSoup(content, "lxml")
     findthis = soup.find_all('a', 'hdrlnk', recursive=True)
-
-    checkfinds(findthis, relink)
+    for a in findthis:
+        listof[b][1] = a.string
+        listof[b][2] = relink + a.get("href")
+        print listof[b][1] + "  " + listof[b][2]
+        b = + 1
+    checkfinds(listof)
 
 
 # def main():
@@ -49,13 +60,13 @@ nycraigslist = "http://newyork.craigslist.org/search/cta?auto_make_model=ford%20
     # pull link tag and add to end of craigslistrelink to create useable link
 ctcraigslistrelink = "http://hartford.craigslist.org"
 nycraigslistrelink = "http://newyork.craigslist.org"
-
+listof = [[x for x in range(200)] for y in range(2)]
     # Changing links into array for easier automation, eventually it could/should be turned into a 2d array
 links = ["http://hartford.craigslist.org/search/cta?auto_make_model=ford%20mustang&hints=makemodel&min_auto_year=1966", "http://newyork.craigslist.org/search/cta?auto_make_model=ford%20mustang&hints=makemodel&min_auto_year=1966"]
 relinks = ["http://hartford.craigslist.org", "http://newyork.craigslist.org"]
 
-for i in links:
-    pull(links[i], relinks[i])
+for i in range(len(links)):
+    pull(links[i], relinks[i], listof)
 
     # content = urllib2.urlopen(ctcraigslist).read()
     # parsing data into soup variable
